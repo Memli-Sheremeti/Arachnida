@@ -14,7 +14,7 @@ def download_image(image_url: str, path: str):
         print("FAILED")
 
 def main():
-    url = "https://en.wikipedia.org/wiki/Spider"
+    url = "https://fr.wikipedia.org/wiki/Python_(langage)"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
     img = soup.find_all("img")
@@ -24,6 +24,12 @@ def main():
             download_image("https:" + image.get("src"), f"data/image{str(count)}.jpg")
             print(image.get("src"))
             count += 1
+        # elif re.search(r'.*\.png$', image.get("src")):
+        #     download_image("https:" + image.get("src"), f"data/image{str(count)}.jpg")
+        #     print(image.get("src"))
+        #     count += 1
+        else:
+            print("rien de chez rien")
     return
 
 if __name__ == "__main__":
