@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from bs4 import BeautifulSoup
-from parser import parse_user_input
+from parser import parse_user_input, Arguments
 import requests
 import re
 
@@ -26,21 +26,25 @@ def scrapp_img_from_a_page(img):
             print("rien de chez rien")
 
 
-def spider(args, link):
-    resp = requests.get(args.URL)
+def spider(args: Arguments):
+    ### having all img from the URL
+    resp = requests.get(args.option.URL)
     soup = BeautifulSoup(resp.text, "html.parser")
-    print(args)
-    print(soup)
     if args.r is True and args.l > 0:
             img = soup.find_all("img")
             scrapp_img_from_a_page(img)
+
+    ### FINDING OTHER URL IN THE PAGE
+    href = soup.find_all("a")
+    for i in href:
+        print(args.url_parsed.scheme + "//" + args.url_parsed.netloc + args.url_parsed.path + i.get("href"))
     return 
 
 
 def main():
-    link = []
-    args = parse_user_input()
-    spider(args, link)
+    args = Arguments(parse_user_input())
+    print(args)
+    spider(args)
     return
 
 
