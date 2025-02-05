@@ -1,6 +1,8 @@
+#!/usr/bin/env python3
+from bs4 import BeautifulSoup
+from parser import parse_user_input
 import requests
 import re
-from bs4 import BeautifulSoup
 
 
 def download_image(image_url: str, path: str):
@@ -13,24 +15,34 @@ def download_image(image_url: str, path: str):
     else:
         print("FAILED")
 
-def main():
-    url = "https://fr.wikipedia.org/wiki/Python_(langage)"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, "html.parser")
-    img = soup.find_all("img")
-    count = 0
+
+def scrapp_img_from_a_page(img):
     for image in img:
         if re.search(r'.*\.jpg$', image.get("src")):
             download_image("https:" + image.get("src"), f"data/image{str(count)}.jpg")
             print(image.get("src"))
             count += 1
-        # elif re.search(r'.*\.png$', image.get("src")):
-        #     download_image("https:" + image.get("src"), f"data/image{str(count)}.jpg")
-        #     print(image.get("src"))
-        #     count += 1
         else:
             print("rien de chez rien")
+
+
+def spider(args, link):
+    resp = requests.get(args.URL)
+    soup = BeautifulSoup(resp.text, "html.parser")
+    print(args)
+    print(soup)
+    if args.r is True and args.l > 0:
+            img = soup.find_all("img")
+            scrapp_img_from_a_page(img)
+    return 
+
+
+def main():
+    link = []
+    args = parse_user_input()
+    spider(args, link)
     return
+
 
 if __name__ == "__main__":
     main()
