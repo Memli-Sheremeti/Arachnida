@@ -3,14 +3,15 @@ import argparse
 import requests
 
 class Arguments:
-    def __init__(self, args: argparse.Namespace):
+    def __init__(self):
         self.url_visited: list = []
-        self.option: argparse.Namespace = args
-        self.url_parsed: up.ParseResult = up.urlparse(args.URL)
+        self.option: argparse.Namespace = None
+        self.url_parsed: up.ParseResult = None
+        self.resp: requests.Response = None
         return
     
     def __str__(self):
-       return f'{self.url_visited}\n{self.option}\n{self.url_parsed}\n'
+       return f'LST URL: {self.url_visited}\n OPTION: {self.option}\n URL-PARSED: {self.url_parsed}\n Resp: {self.resp}'
 
     def replace_url(self, url: str):
         self.option.URL = url
@@ -35,23 +36,26 @@ def arg_user():
     return arg.parse_args()
 
 
-def check_url(URL):
+def error_option(args: Arguments) -> None:
+    if args.option.l != 5 and args.option.r is False:
+        raise Exception(f"usage: [-h] [-r] [-l N] [-p PATH] URL\nerror: argument -l: invalid without -r")
+    return
+
+def check_url(args: Arguments) -> None:
     # NEED TO CHECK IF I CAN USE a url parser !
     try:
-        requests.get(URL)
+       args.resp = requests.get(args.option.URL)
+    except Exception:
+        raise Exception(f'Invalid URL: {args.option.URL}')
+
+
+def parse_user_input(args: Arguments):
+    args.option = arg_user()
+    try: 
+        error_option(args)
+        check_url(args)
     except Exception as e:
-        print(f'Invalid URL: {URL} nodename nor servname provided, or not known')
-        return False
-    return True
-
-
-def parse_user_input():
-    args = arg_user()
-    if check_url(args.URL) is False:
-        exit(1)
-    if args.l != 5 and args.r is False:
-        print("ERROR in option")
-        exit(2)
+        raise Exception(e)
     return args
 
 

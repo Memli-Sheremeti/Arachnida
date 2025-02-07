@@ -42,9 +42,13 @@ def spider(args: Arguments):
 
 
 def main():
-    args = Arguments(parse_user_input())
-    print(args)
-    spider(args)
+    args = Arguments()
+    try:
+        parse_user_input(args)
+        print(args)
+        # spider(args)
+    except Exception as e:
+        print(e)
     return
 
 
