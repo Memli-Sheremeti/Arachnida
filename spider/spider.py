@@ -28,14 +28,16 @@ def scrapp_img_from_a_page(img):
 
 def spider(args: Arguments):
     ### having all img from the URL
-    if args.option.r is True and args.option.l > 0:
-            img = args.soup.find_all("img")
-            scrapp_img_from_a_page(img)
+    img = args.soup.find_all("img")
+    scrapp_img_from_a_page(img)
 
+    if args.option.r is True and args.option.l > 0:
+        print("FINDING NEW PAGE")
+        args.recursive_depth()
     ### FINDING OTHER URL IN THE PAGE
-    href = args.soup.find_all("a")
-    for i in href:
-        print(args.url_parsed.scheme + "//" + args.url_parsed.netloc + args.url_parsed.path + i.get("href"))
+    # href = args.soup.find_all("a")
+    # for i in href:
+    #     print(args.url_parsed.scheme + "//" + args.url_parsed.netloc + args.url_parsed.path + i.get("href"))
     return 
 
 
@@ -44,7 +46,7 @@ def main():
     try:
         parse_user_input(args)
         print(args)
-        # spider(args)
+        spider(args)
     except Exception as e:
         print(e)
     return

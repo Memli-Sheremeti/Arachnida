@@ -15,7 +15,7 @@ class Arguments:
         return
     
     def __str__(self):
-       return f'LST URL: {self.url_visited}\n OPTION: {self.option}\n URL-PARSED: {self.url_parsed}\n Resp: {self.resp}'
+       return f'LST URL: {self.url_visited}\nOPTION: {self.option}\nURL-PARSED: {self.url_parsed}\nResp: {self.resp}\n'
 
     def replace_url(self, url: str):
         self.option.URL = url
@@ -55,12 +55,19 @@ def request_url(args: Arguments) -> None:
         raise Exception(f'Invalid URL: {args.option.URL}')
 
 
+def split_url(args: Arguments) -> None:
+    if not args.url_parsed:
+        args.url_parsed = up.urlparse(args.option.URL)
+    return
+
+
 def parse_user_input(args: Arguments) -> Arguments:
     try: 
         args.option = arg_user()
         create_the_directory(args.option.p)
         error_option(args)
         request_url(args)
+        split_url(args)
     except Exception as e:
         raise Exception(e)
     return args
