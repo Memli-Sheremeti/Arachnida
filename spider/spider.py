@@ -17,6 +17,7 @@ def download_image(image_url: str, path: str):
 
 
 def scrapp_img_from_a_page(img):
+    count = 0
     for image in img:
         if re.search(r'.*\.jpg$', image.get("src")):
             download_image("https:" + image.get("src"), f"data/image{str(count)}.jpg")
