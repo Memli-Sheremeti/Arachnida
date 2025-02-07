@@ -28,14 +28,12 @@ def scrapp_img_from_a_page(img):
 
 def spider(args: Arguments):
     ### having all img from the URL
-    resp = requests.get(args.option.URL)
-    soup = BeautifulSoup(resp.text, "html.parser")
-    if args.r is True and args.l > 0:
-            img = soup.find_all("img")
+    if args.option.r is True and args.option.l > 0:
+            img = args.soup.find_all("img")
             scrapp_img_from_a_page(img)
 
     ### FINDING OTHER URL IN THE PAGE
-    href = soup.find_all("a")
+    href = args.soup.find_all("a")
     for i in href:
         print(args.url_parsed.scheme + "//" + args.url_parsed.netloc + args.url_parsed.path + i.get("href"))
     return 
