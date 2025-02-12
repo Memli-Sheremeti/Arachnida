@@ -26,9 +26,9 @@ class Arguments:
             self.option.l -= 1
         return
     
-    def add_url_visited(self):
-        if self.option.URL not in self.url_visited:
-            self.url_visited.append(self.option.URL)
+    def add_url_visited(self, url):
+        if url not in self.url_visited:
+            self.url_visited.append(url)
 
 
 def arg_user() -> argparse.Namespace:

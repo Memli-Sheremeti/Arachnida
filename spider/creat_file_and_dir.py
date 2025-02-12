@@ -10,6 +10,14 @@ def create_the_directory(path: str) -> None:
     return
 
 
+def create_the_img(args, path: str, response) -> None:
+    path = path.split("/")
+    path = path[len(path) - 1]
+    path = args.option.p + path
+    print(path)
+    with open(path, "wb") as file:
+        file.write(response.content)
+
 def main():
     return
 
