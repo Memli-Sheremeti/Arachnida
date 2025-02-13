@@ -15,8 +15,13 @@ def create_the_img(args, path: str, response) -> None:
     path = path[len(path) - 1]
     path = args.option.p + path
     print(path)
-    with open(path, "wb") as file:
-        file.write(response.content)
+    try:
+        with open(path, "wb") as file:
+            file.write(response.content)
+    except OSError as e:
+        if e.errno != 17:
+            raise Exception(e)
+
 
 def main():
     return

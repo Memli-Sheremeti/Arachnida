@@ -10,12 +10,12 @@ class Arguments:
         self.url_visited: list = []
         self.option: argparse.Namespace = None
         self.url_parsed: up.ParseResult = None
-        self.resp: requests.Response = None
+        self.rq: requests.Response = None
         self.soup: BeautifulSoup = None
         return
     
     def __str__(self):
-       return f'LST URL: {self.url_visited}\nOPTION: {self.option}\nURL-PARSED: {self.url_parsed}\nResp: {self.resp}\n'
+       return f'LST URL: {self.url_visited}\nOPTION: {self.option}\nURL-PARSED: {self.url_parsed}\nRq: {self.rq}\n'
 
     def replace_url(self, url: str):
         self.option.URL = url
@@ -26,9 +26,11 @@ class Arguments:
             self.option.l -= 1
         return
     
-    def add_url_visited(self, url):
+    def check_if_not_url_visited(self, url: str):
         if url not in self.url_visited:
-            self.url_visited.append(url)
+                return True
+        return False
+
 
 
 def arg_user() -> argparse.Namespace:
@@ -46,18 +48,23 @@ def error_option(args: Arguments) -> None:
     return
 
 
-def request_url(args: Arguments) -> None:
+def request_url(args: Arguments, url: str) -> None:
     # NEED TO CHECK IF I CAN USE a url parser !
     try:
-       args.resp = requests.get(args.option.URL)
-       args.soup = BeautifulSoup(args.resp.text, "html.parser")
-    except Exception:
-        raise Exception(f'Invalid URL: {args.option.URL}')
+       tmp = requests.get(url)
+       if tmp.status_code != 200:
+           raise Exception(f'Invalid URL: {url}')
+       args.rq = tmp
+       args.soup = BeautifulSoup(args.rq.text, "html.parser")
+    except Exception as e:
+        raise Exception(f'Invalid URL: {url}')
 
 
 def split_url(args: Arguments) -> None:
-    if not args.url_parsed:
+    try:
         args.url_parsed = up.urlparse(args.option.URL)
+    except Exception as e:
+        raise Exception(e)
     return
 
 
@@ -66,11 +73,23 @@ def parse_user_input(args: Arguments) -> Arguments:
         args.option = arg_user()
         create_the_directory(args.option.p)
         error_option(args)
-        request_url(args)
+        request_url(args, args.option.URL)
         split_url(args)
     except Exception as e:
         raise Exception(e)
     return args
+
+
+def validate_url(args: Arguments, url: str) -> bool:
+    if args.check_if_not_url_visited(url):
+        try:
+            request_url(args, url)
+            args.option.URL = url
+            split_url(args)
+            return True
+        except Exception as e:
+            return False
+    return False
 
 
 def main():
