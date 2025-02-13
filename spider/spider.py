@@ -69,10 +69,10 @@ def find_new_url(args: Arguments):
 
 def spider(args: Arguments):
     scrapp_img_from_a_page(args)
-    ## FINDING OTHER URL IN THE PAGE
     if args.option.r is True and args.option.l > 0:
         args.recursive_depth()
         find_new_url(args)
+        print(args.url_visited)
         spider(args)
     return 
 
@@ -81,6 +81,7 @@ def main():
     args = Arguments()
     try:
         parse_user_input(args)
+        # print(args)
         spider(args)
     except Exception as e:
         print(e)

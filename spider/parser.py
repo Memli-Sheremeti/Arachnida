@@ -16,10 +16,6 @@ class Arguments:
     
     def __str__(self):
        return f'LST URL: {self.url_visited}\nOPTION: {self.option}\nURL-PARSED: {self.url_parsed}\nRq: {self.rq}\n'
-
-    def replace_url(self, url: str):
-        self.option.URL = url
-        return
     
     def recursive_depth(self):
         if self.option.l > 0:
@@ -32,13 +28,12 @@ class Arguments:
         return False
 
 
-
 def arg_user() -> argparse.Namespace:
     arg = argparse.ArgumentParser()
     arg.add_argument("URL")
     arg.add_argument("-r", action="store_true", help="recursively downloads the images in a URL received as a parameter.")
     arg.add_argument("-l", type=int, default=5, metavar="N", help="indicates the maximum depth level of the recursive download. If not indicated, it will be 5.")
-    arg.add_argument("-p", type=str, default="./data/", metavar= "PATH", help="indicates the path where the downloaded files will be saved. If not specified, ./data/ will be used")
+    arg.add_argument("-p", type=str, default="./data", metavar= "PATH", help="indicates the path where the downloaded files will be saved. If not specified, ./data/ will be used")
     return arg.parse_args()
 
 
@@ -49,7 +44,6 @@ def error_option(args: Arguments) -> None:
 
 
 def request_url(args: Arguments, url: str) -> None:
-    # NEED TO CHECK IF I CAN USE a url parser !
     try:
        tmp = requests.get(url)
        if tmp.status_code != 200:
@@ -71,7 +65,7 @@ def split_url(args: Arguments) -> None:
 def parse_user_input(args: Arguments) -> Arguments:
     try: 
         args.option = arg_user()
-        create_the_directory(args.option.p)
+        create_the_directory(args, args.option.p)
         error_option(args)
         request_url(args, args.option.URL)
         split_url(args)
